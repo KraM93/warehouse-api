@@ -23,7 +23,7 @@ RESTful API сервис для автоматизации складского 
 ## Быстрый старт (Запуск через Docker)
 
 1. Клонируйте репозиторий:
-    '''bash
+    ```bash
     git clone [https://github.com/ВАШ_НИК/warehouse-api.git](https://github.com/ВАШ_НИК/warehouse-api.git)
     cd warehouse-api
 
