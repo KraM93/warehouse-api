@@ -86,7 +86,6 @@ proto-plus==1.28.0
 protobuf==5.29.6
 psutil==7.2.2
 psycopg2-binary==2.9.12
-py3minepi @ file:///C:/Users/%D0%9C%D0%B0%D1%80%D0%BA/Desktop/Minecraft%20Tools/minecraftPythonAPI.zip#sha256=7cf2e2830b3cfa83b35b5dfb5ba9548ccba8a0a72445c1d037d170b3f54a5813
 pyasn1==0.6.3
 pyasn1_modules==0.4.2
 PyAutoGUI==0.9.54
