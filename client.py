@@ -26,11 +26,11 @@ def attempt_login():
         elif response.status_code == 401:
             messagebox.showerror("Ошибка доступа", "Неверный логин или пароль")
         else:
-            messagebox.showerror("Ошибка", 
+            messagebox.showerror("Ошибка",
                                  f"Неизвестная ошибка: {response.status_code}")
 
     except requests.exceptions.ConnectionError:
-        messagebox.showerror("Ошибка сети", 
+        messagebox.showerror("Ошибка сети",
                              "Не удалось подключиться к серверу.")
 
 
@@ -51,34 +51,38 @@ def open_main_window():
         params = {"search": search_query} if search_query else {}
 
         try:
-            response = requests.get(f"{API_URL}/items", 
+            response = requests.get(f"{API_URL}/items",
                                     headers=headers, params=params)
 
             if response.status_code == 200:
                 items = response.json()
 
                 for item in items:
-                    tree.insert("", tk.END, values=(item["id"], 
-                                                    item["name"], 
-                                                    item["price"], 
+                    tree.insert("", tk.END, values=(item["id"],
+                                                    item["name"],
+                                                    item["price"],
                                                     item["quantity"])
-                                                    )
-            
+                                )
+
             else:
-                messagebox.showerror("Ошибка", 
-                                     f"Не удалость загрузить товары. Код: {response.status_code}")
+                messagebox.showerror(
+                    "Ошибка",
+                    f"Не удалость загрузить товары. Код: {response.status_code}"
+                                    )
 
         except requests.exceptions.ConnectionError:
             messagebox.showerror("Ошибка сети", "Нет связи с сервером")
-    
+
     def perform_search():
         query = entry_search.get()
         load_items(query)
-    
+
     def update_quantity():
         selected = tree.selection()
         if not selected:
-            messagebox.showwarning("Внимание", "Сначала выделите товар в таблице!")
+            messagebox.showwarning("Внимание",
+                "Сначала выделите товар в таблице!"
+                                    )
             return
         
         item_id = tree.item(selected[0])['values'][0]
@@ -89,8 +93,11 @@ def open_main_window():
         update_window.geometry("300x150")
         update_window.resizable(False, False)
 
-        tk.Label(update_window, text=f"Товар: {item_name}", font=("Arial", 10, "bold")).pack(pady=10)
-        tk.Label(update_window, text="На сколько изменить? (например, 5 или -3): ").pack()
+        tk.Label(update_window,
+                 text=f"Товар: {item_name}",
+                 font=("Arial", 10, "bold")).pack(pady=10)
+        tk.Label(update_window,
+                 text="На сколько изменить? (например, 5 или -3): ").pack()
 
         entry_amount = tk.Entry(update_window, width=15)
         entry_amount.pack(pady=5)
@@ -111,7 +118,9 @@ def open_main_window():
                     update_window.destroy()
                     load_items()
                 else:
-                    messagebox.showerror("Ошибка", f"Отказ сервера: {response.text}")
+                    messagebox.showerror("Ошибка",
+                        f"Отказ сервера: {response.text}"
+                                        )
 
             except ValueError:
                 messagebox.showerror("Ошибка ввода", "Пожалуйста, введите целое число")

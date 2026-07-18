@@ -18,8 +18,10 @@ pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
 
 load_dotenv()
 
-SECRET_KEY = os.getenv("SECRET_KEY", 
-                       "ea3307e3d0f9241ae050439db99e6b1cc11247bdf7aeffa9e0dd1a86ca26f7de")
+SECRET_KEY = os.getenv(
+    "SECRET_KEY",
+    "ea3307e3d0f9241ae050439db99e6b1cc11247bdf7aeffa9e0dd1a86ca26f7de"
+)
 ALGORITHM = os.getenv("ALGORITHM", "HS256")
 
 # Кнопка Authorize
@@ -83,14 +85,14 @@ def get_current_user(token: str = Depends(oauth2_scheme)):
         payload = jwt.decode(token, SECRET_KEY, algorithms=[ALGORITHM])
         user_id: str = payload.get("sub")
         if user_id is None:
-            raise HTTPException(status_code=401, 
+            raise HTTPException(status_code=401,
                                 detail="Токен не содержит ID пользователя")
         return int(user_id)
     except jwt.ExpiredSignatureError:
-        raise HTTPException(status_code=401, 
+        raise HTTPException(status_code=401,
                             detail="Время действия токена истекло")
     except jwt.InvalidTokenError:
-        raise HTTPException(status_code=401, 
+        raise HTTPException(status_code=401,
                             detail="Поддельный или поврежденный токен")
 
 
