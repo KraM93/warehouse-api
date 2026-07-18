@@ -5,6 +5,7 @@ import requests
 API_URL = "http://127.0.0.1:8000"
 current_token = ""
 
+
 def attempt_login():
     global current_token
     username = entry_username.get()
@@ -29,6 +30,7 @@ def attempt_login():
 
     except requests.exceptions.ConnectionError:
         messagebox.showerror("Ошибка сети", "Не удалось подключиться к серверу.")
+
 
 def open_main_window():
     root.withdraw()
@@ -109,6 +111,7 @@ def open_main_window():
                 messagebox.showerror("Ошибка сети", "Нет связи с сервером")
 
         tk.Button(update_window, text="Сохранить", bg="lightgreen", command=save_quantity).pack(pady=10)
+
 
     def add_new_item():
         add_window = tk.Toplevel(main_window)

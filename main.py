@@ -30,19 +30,23 @@ models.Base.metadata.create_all(bind=engine)
 # Экземпляр приложения
 app = FastAPI(title="Inventory API", description="Система управления складом")
 
+
 # Валидация товара
 class ItemCreate(BaseModel):
     name: str
     price: float
+
 
 class UserCreate(BaseModel):
     username: str
     password: str
     role: str = "worker"
 
+
 class UserLogin(BaseModel):
     username: str
     password: str
+
 
 class ItemResponse(BaseModel):
     id: int
@@ -50,14 +54,17 @@ class ItemResponse(BaseModel):
     price: float
     quantity: int
 
+
 class LogResponse(BaseModel):
     id: int
     item_id: int
     user_id: int
     change_amount: int
 
+
 class Config:
     from_attributes = True
+
 
 # Подключение / Закрытие к БД
 def get_db():
@@ -66,6 +73,7 @@ def get_db():
         yield db
     finally:
         db.close()
+
 
 # GET: проверка токена
 def get_current_user(token: str = Depends(oauth2_scheme)):
@@ -82,6 +90,7 @@ def get_current_user(token: str = Depends(oauth2_scheme)):
     except jwt.InvalidTokenError:
         raise HTTPException(status_code=401, detail="Поддельный или поврежденный токен")
 
+
 # GET: проверка админа
 def require_admin(token: str = Depends(oauth2_scheme)):
     try:
@@ -97,6 +106,7 @@ def require_admin(token: str = Depends(oauth2_scheme)):
     except jwt.InvalidTokenError:
         raise HTTPException(status_code=401, detail="Поддельный токен")
 
+
 # GET: получение по ID
 @app.get("/items/{item_id}")
 def get_item(item_id: int, db: Session = Depends(get_db)):
@@ -108,6 +118,7 @@ def get_item(item_id: int, db: Session = Depends(get_db)):
         raise HTTPException(status_code=404, detail="Товар не найден")
     
     return {"status":"ok", "item":item}
+
 
 # GET: Получить список товаров (с поиском и страницами)
 @app.get("/items", response_model=List[ItemResponse])
@@ -126,6 +137,7 @@ def get_items(
 
     return items
 
+
 # GET: Получить историю операций
 @app.get("/logs", response_model=List[LogResponse])
 def get_audit_logs(
@@ -137,6 +149,7 @@ def get_audit_logs(
     logs = db.query(models.ItemLog).order_by(models.ItemLog.id.desc()).offset(skip).limit(limit).all()
 
     return logs
+
 
 # POST: добавление товаров
 @app.post("/items")
@@ -152,6 +165,7 @@ def create_item(item: ItemCreate, db: Session = Depends(get_db), admin_id: int =
     db.refresh(db_item)
 
     return {"status": "success", "message":f"Товар '{db_item.name}' добавлен админом ID {admin_id}"}
+
 
 # POST: регистрация
 @app.post("/register")
@@ -176,6 +190,7 @@ def register_user(user: UserCreate, db: Session = Depends(get_db)):
     
     print(f"Успех! ID пользователя: {db_user.id}")
     return {"status": "success", "message": "Пользователь успешно зарегистрирован", "user_id":db_user.id}
+
 
 # POST: вход в систему и генерация токена
 @app.post("/login")
@@ -202,6 +217,7 @@ def login_user(form_data: OAuth2PasswordRequestForm = Depends(), db: Session = D
 
     # Отдаем токен клиенту
     return {"access_token": token, "token_type": "bearer"}
+
 
 # PUT: обновление количества товара
 @app.put("/items/{item_id}/quantity")
@@ -234,6 +250,7 @@ def update_quantity(item_id: int, amount_change: int, db: Session = Depends(get_
         print(f"Error: {repr(e)}")
         raise HTTPException(status_code=500, detail="Ошибка БД при обновлении")
     
+
 # DELETE: удаление данных
 @app.delete("/items/{item_id}")
 def delete_item(

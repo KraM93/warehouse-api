@@ -2,6 +2,7 @@ from sqlalchemy import Column, Integer, String, Float, ForeignKey, DateTime
 from sqlalchemy.sql import func
 from database import Base
 
+
 class User(Base):
     __tablename__ = "users"
 
@@ -10,6 +11,7 @@ class User(Base):
     hashed_password = Column(String)
 
     role = Column(String, default="worker")
+
 
 class Item(Base):
     # Название таблицы в БД
@@ -24,6 +26,7 @@ class Item(Base):
     def __repr__(self):
         return f"<Item '{self.name}', qty: {self.quantity}>"
 
+
     # Таблица: история операций
 class ItemLog(Base):
     __tablename__ = "item_logs"
@@ -35,4 +38,4 @@ class ItemLog(Base):
 
     change_amount = Column(Integer)
     created_at = Column(DateTime(timezone=True), server_default=func.now())
-
+    
