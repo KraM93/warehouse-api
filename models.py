@@ -26,7 +26,6 @@ class Item(Base):
     def __repr__(self):
         return f"<Item '{self.name}', qty: {self.quantity}>"
 
-
     # Таблица: история операций
 class ItemLog(Base):
     __tablename__ = "item_logs"
@@ -38,4 +37,3 @@ class ItemLog(Base):
 
     change_amount = Column(Integer)
     created_at = Column(DateTime(timezone=True), server_default=func.now())
-    

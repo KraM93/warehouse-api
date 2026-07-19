@@ -203,9 +203,10 @@ def register_user(
         f"пароль='{user.password}'"
     )
     # Проверка на дубль логина
-    existing_user = (db.query(models.User)
-                    .filter(models.User.username == user.username)
-                    .first()
+    existing_user = (
+        db.query(models.User)
+        .filter(models.User.username == user.username)
+        .first()
     )
     print(f"Поиск: {existing_user}")
 
@@ -243,9 +244,10 @@ def login_user(
     db: Session = Depends(get_db)
 ):
     # Ищем по логину
-    db_user = (db.query(models.User)
-               .filter(models.User.username == form_data.username)
-               .first()
+    db_user = (
+        db.query(models.User)
+        .filter(models.User.username == form_data.username)
+        .first()
     )
 
     # Защита: проверка на совпадение логина и пароля
@@ -288,9 +290,10 @@ def update_quantity(
     db: Session = Depends(get_db),
     current_user_id: int = Depends(get_current_user)
 ):
-    item = (db.query(models.Item)
-            .filter(models.Item.id == item_id)
-            .first()
+    item = (
+        db.query(models.Item)
+        .filter(models.Item.id == item_id)
+        .first()
     )
     # Поиск товара
     if item is None:
@@ -321,7 +324,7 @@ def update_quantity(
             "status": "success",
             "message": "Количество обновлено и записано в историю",
             "item": item
-        }    
+        }
     except Exception as e:
         db.rollback()
         print(f"Error: {repr(e)}")
@@ -338,9 +341,10 @@ def delete_item(
     db: Session = Depends(get_db),
     admin_id: int = Depends(require_admin)
 ):
-    item = (db.query(models.Item)
-            .filter(models.Item.id == item_id)
-            .first()
+    item = (
+        db.query(models.Item)
+        .filter(models.Item.id == item_id)
+        .first()
     )
 
     if not item:
