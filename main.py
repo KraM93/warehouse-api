@@ -106,9 +106,15 @@ def require_admin(token: str = Depends(oauth2_scheme)):
             raise HTTPException(status_code=403, detail="Доступ запрещен")
         return int(payload.get("sub"))
     except jwt.ExpiredSignatureError:
-        raise HTTPException(status_code=401, detail="Время действия токена истекло")
+        raise HTTPException(
+            status_code=401,
+            detail="Время действия токена истекло"
+        )
     except jwt.InvalidTokenError:
-        raise HTTPException(status_code=401, detail="Поддельный токен")
+        raise HTTPException(
+            status_code=401,
+            detail="Поддельный токен"
+        )
 
 
 # GET: получение по ID
@@ -116,10 +122,12 @@ def require_admin(token: str = Depends(oauth2_scheme)):
 def get_item(item_id: int, db: Session = Depends(get_db)):
     # запрос к БД: найти первую запись
     item = db.query(models.Item).filter(models.Item.id == item_id).first()
-
     # если ничего не найдено
     if item is None:
-        raise HTTPException(status_code=404, detail="Товар не найден")
+        raise HTTPException(
+            status_code=404,
+            detail="Товар не найден"
+        )
     
     return {"status":"ok", "item":item}
 
@@ -148,7 +156,7 @@ def get_audit_logs(
     skip: int = 0,
     limit: int = 50,
     db: Session = Depends(get_db),
-    admin_id: int = Depends(require_admin) 
+    admin_id: int = Depends(require_admin)
 ):
     logs = db.query(models.ItemLog).order_by(models.ItemLog.id.desc()).offset(skip).limit(limit).all()
 
