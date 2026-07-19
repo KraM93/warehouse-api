@@ -221,14 +221,14 @@ def open_main_window():
 
         confirm = messagebox.askyesno(
             "Подтверждение",
-            f"Вы уверены, что хотите безвозвратно удалить товар?"
+            f"Вы уверены,"
+            "что хотите безвозвратно удалить товар?"
             "'{item_name}'?"
         )
 
         if not confirm:
             return
         headers = {"Authorization": f"Bearer {current_token}"}
-
         try:
             response = requests.delete(
                 f"{API_URL}/items/{item_id}",
@@ -266,7 +266,6 @@ def open_main_window():
 
     entry_search = tk.Entry(top_frame, width=30)
     entry_search.pack(side=tk.LEFT, padx=5)
-
     btn_search = tk.Button(
         top_frame,
         text="Найти",
@@ -360,7 +359,6 @@ root = tk.Tk()
 root.title("Склад 1.0 - Вход")
 root.geometry("300x250")
 root.resizable(False, False)
-
 tk.Label(
     root,
     text="Авторизация",
