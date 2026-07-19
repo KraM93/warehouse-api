@@ -158,8 +158,6 @@ def open_main_window():
         ).pack(pady=(10, 0))
         entry_price = tk.Entry(add_window, width=15)
         entry_price.pack(pady=5)
-    
-
         def save_new_item():
             name = entry_name.get().strip()
             price_text = entry_price.get().strip().replace(',', '.')
@@ -172,9 +170,7 @@ def open_main_window():
             
             try:
                 price = float(price_text)
-
                 headers = {"Authorization": f"Bearer {current_token}"}
-
                 new_item_data = {
                     "name": name,
                     "price": price
