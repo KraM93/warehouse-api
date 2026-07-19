@@ -25,8 +25,9 @@ class Item(Base):
 
     def __repr__(self):
         return f"<Item '{self.name}', qty: {self.quantity}>"
-
     # Таблица: история операций
+
+    
 class ItemLog(Base):
     __tablename__ = "item_logs"
 
