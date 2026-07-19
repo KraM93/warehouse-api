@@ -332,7 +332,7 @@ def update_quantity(
             status_code=500,
             detail="Ошибка БД при обновлении"
         )
-    
+
 
 # DELETE: удаление данных
 @app.delete("/items/{item_id}")
