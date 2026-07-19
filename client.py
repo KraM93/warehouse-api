@@ -131,10 +131,11 @@ def open_main_window():
             except requests.exceptions.ConnectionError:
                 messagebox.showerror("Ошибка сети", "Нет связи с сервером")
 
-        tk.Button(update_window,
-                text="Сохранить",
-                bg="lightgreen",
-                command=save_quantity).pack(pady=10)
+        tk.Button(
+            update_window,
+            text="Сохранить",
+            bg="lightgreen",
+            command=save_quantity).pack(pady=10)
 
     def add_new_item():
         add_window = tk.Toplevel(main_window)
@@ -142,14 +143,16 @@ def open_main_window():
         add_window.geometry("300x200")
         add_window.resizable(False, False)
 
-        tk.Label(add_window,
-                text="Наименование: ",
-                font=("Arial", 10)).pack(pady=(10, 0))
+        tk.Label(
+            add_window,
+            text="Наименование: ",
+            font=("Arial", 10)).pack(pady=(10, 0))
         entry_name = tk.Entry(add_window, width=30)
         entry_name.pack(pady=5)
-        tk.Label(add_window,
-                text="Цена: ",
-                font=("Arial", 10)).pack(pady=(10, 0))
+        tk.Label(
+            add_window,
+            text="Цена: ",
+            font=("Arial", 10)).pack(pady=(10, 0))
         entry_price = tk.Entry(add_window, width=15)
         entry_price.pack(pady=5)
     
@@ -158,8 +161,10 @@ def open_main_window():
             price_text = entry_price.get().strip().replace(',', '.')
 
             if not name:
-                messagebox.showwarning("Внимание",
-                            "Название товара не может быть пустым!")
+                messagebox.showwarning(
+                    "Внимание",
+                    "Название товара не может быть пустым!"
+                )
                 return
             
             try:
@@ -171,7 +176,6 @@ def open_main_window():
                     "name": name,
                     "price": price
                 }
-
                 response = requests.post(
                     f"{API_URL}/items",
                     json=new_item_data,
