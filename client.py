@@ -66,8 +66,8 @@ def open_main_window():
 
             else:
                 messagebox.showerror(
-                "Ошибка",
-                f"Не удалось загрузить товары. Код: {response.status_code}"
+                    "Ошибка",
+                    f"Не удалось загрузить товары. Код: {response.status_code}"
                 )
 
         except requests.exceptions.ConnectionError:
@@ -80,8 +80,9 @@ def open_main_window():
     def update_quantity():
         selected = tree.selection()
         if not selected:
-            messagebox.showwarning("Внимание",
-                "Сначала выделите товар в таблице!"
+            messagebox.showwarning(
+                    "Внимание",
+                    "Сначала выделите товар в таблице!"
             )
             return
         item_id = tree.item(selected[0])['values'][0]
@@ -117,13 +118,16 @@ def open_main_window():
                     update_window.destroy()
                     load_items()
                 else:
-                    messagebox.showerror("Ошибка",
-                    f"Отказ сервера: {response.text}"
+                    messagebox.showerror(
+                        "Ошибка",
+                        f"Отказ сервера: {response.text}"
                     )
 
             except ValueError:
-                messagebox.showerror("Ошибка ввода",
-                "Пожалуйста, введите целое число")
+                messagebox.showerror(
+                    "Ошибка ввода",
+                    "Пожалуйста, введите целое число"
+                )
             except requests.exceptions.ConnectionError:
                 messagebox.showerror("Ошибка сети", "Нет связи с сервером")
 
