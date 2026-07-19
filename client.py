@@ -223,7 +223,7 @@ def open_main_window():
             "Подтверждение",
             f"Вы уверены,"
             "что хотите безвозвратно удалить товар?"
-            "'{item_name}'?"
+            f"'{item_name}'?"
         )
 
         if not confirm:
@@ -354,6 +354,7 @@ def open_main_window():
     )
 
     load_items()
+
 
 root = tk.Tk()
 root.title("Склад 1.0 - Вход")
