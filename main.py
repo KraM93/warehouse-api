@@ -155,16 +155,29 @@ def get_audit_logs(
     db: Session = Depends(get_db),
     admin_id: int = Depends(require_admin)
 ):
-    logs = db.query(models.ItemLog).order_by(models.ItemLog.id.desc()).offset(skip).limit(limit).all()
+    logs = db.query(
+        models.ItemLog
+        .order_by(models.ItemLog.id.desc())
+        .offset(skip)
+        .limit(limit).all()
+    )
 
     return logs
 
 
 # POST: добавление товаров
 @app.post("/items")
-def create_item(item: ItemCreate, db: Session = Depends(get_db), admin_id: int = Depends(require_admin)):
+def create_item(
+    item: ItemCreate,
+    db: Session = Depends(get_db),
+    admin_id: int = Depends(require_admin)
+):
     # Создание объекта таблицы
-    db_item = models.Item(name=item.name, price=item.price, quantity=0)
+    db_item = models.Item(
+        name=item.name,
+        price=item.price,
+        quantity=0
+    )
 
     # Добавление в сессию и сохранение
     db.add(db_item)
@@ -173,43 +186,80 @@ def create_item(item: ItemCreate, db: Session = Depends(get_db), admin_id: int =
     # Обновление объекта
     db.refresh(db_item)
 
-    return {"status": "success", "message":f"Товар '{db_item.name}' добавлен админом ID {admin_id}"}
+    return {
+        "status": "success",
+        "message": f"Товар '{db_item.name}'"
+        f"добавлен админом ID '{admin_id}'"
+    }
 
 
 # POST: регистрация
 @app.post("/register")
-def register_user(user: UserCreate, db: Session = Depends(get_db)):
-    print(f"Запрос на регистрацию: логин='{user.username}', пароль='{user.password}'")
+def register_user(
+    user: UserCreate,
+    db: Session = Depends(get_db)
+):
+    print(
+        "Запрос на регистрацию:"
+        f"логин='{user.username}',"
+        f"пароль='{user.password}'"
+    )
     # Проверка на дубль логина
-    existing_user = db.query(models.User).filter(models.User.username == user.username).first()
+    existing_user = db.query(
+        models.User
+        ).filter(models.User.username == user.username
+        ).first()
     print(f"Поиск: {existing_user}")
 
     if existing_user:
         print("Ошибка: Пользователь найден")
-        raise HTTPException(status_code=400, detail="Пользователь с таким именем уже существует")
+        raise HTTPException(
+            status_code=400,
+            detail="Пользователь с таким именем уже существует"
+        )
 
     # Хэширование пароля
     hashed_pass = pwd_context.hash(user.password)
 
     # Создание пользователя
-    db_user = models.User(username=user.username, hashed_password=hashed_pass, role=user.role)
+    db_user = models.User(
+        username=user.username,
+        hashed_password=hashed_pass,
+        role=user.role
+    )
     db.add(db_user)
     db.commit()
     db.refresh(db_user)
     
     print(f"Успех! ID пользователя: {db_user.id}")
-    return {"status": "success", "message": "Пользователь успешно зарегистрирован", "user_id":db_user.id}
+    return {
+        "status": "success",
+        "message": "Пользователь успешно зарегистрирован",
+        "user_id":db_user.id
+    }
 
 
 # POST: вход в систему и генерация токена
 @app.post("/login")
-def login_user(form_data: OAuth2PasswordRequestForm = Depends(), db: Session = Depends(get_db)):
+def login_user(
+    form_data: OAuth2PasswordRequestForm = Depends(),
+    db: Session = Depends(get_db)
+):
     # Ищем по логину
-    db_user = db.query(models.User).filter(models.User.username == form_data.username).first()
+    db_user = db.query(
+        models.User
+        ).filter(models.User.username == form_data.username
+        ).first()
 
     # Защита: проверка на совпадение логина и пароля
-    if not db_user or not pwd_context.verify(form_data.password, db_user.hashed_password):
-        raise HTTPException(status_code=401, detail="Неверный логин или пароль")
+    if not db_user or not pwd_context.verify(
+        form_data.password,
+        db_user.hashed_password
+    ):
+        raise HTTPException(
+            status_code=401,
+            detail="Неверный логин или пароль"
+        )
     
     # Время жизни токена
     expire_time = datetime.now(timezone.utc) + timedelta(minutes=30)
@@ -222,42 +272,69 @@ def login_user(form_data: OAuth2PasswordRequestForm = Depends(), db: Session = D
     }
 
     # Создание зашифрованной строки
-    token = jwt.encode(token_data, SECRET_KEY, algorithm=ALGORITHM)
+    token = jwt.encode(
+        token_data,
+        SECRET_KEY,
+        algorithm=ALGORITHM
+    )
 
     # Отдаем токен клиенту
-    return {"access_token": token, "token_type": "bearer"}
+    return {
+        "access_token": token,
+        "token_type": "bearer"
+    }
 
 
 # PUT: обновление количества товара
 @app.put("/items/{item_id}/quantity")
-def update_quantity(item_id: int, amount_change: int, db: Session = Depends(get_db), current_user_id: int = Depends(get_current_user)):
-    item = db.query(models.Item).filter(models.Item.id == item_id).first()
+def update_quantity(
+    item_id: int,
+    amount_change: int,
+    db: Session = Depends(get_db),
+    current_user_id: int = Depends(get_current_user)
+):
+    item = db.query(
+        models.Item
+        ).filter(models.Item.id == item_id
+        ).first()
     # Поиск товара
     if item is None:
-        raise HTTPException(status_code=404, detail="Товар не найден")
+        raise HTTPException(
+            status_code=404,
+            detail="Товар не найден"
+        )
     # Защита на минус
     if item.quantity + amount_change < 0:
-        raise HTTPException(status_code=400, detail=f"На складе не хватает товара. В наличии: {item.quantity}")
+        raise HTTPException(
+            status_code=400,
+            detail="На складе не хватает товара."
+            f"В наличии: {item.quantity}"
+        )
     # Транзакция
     try:
         item.quantity += amount_change
 
-        new_log = models.ItemLog(item_id=item.id, change_amount=amount_change, user_id=current_user_id)
+        new_log = models.ItemLog(
+            item_id=item.id,
+            change_amount=amount_change,
+            user_id=current_user_id
+        )
         db.add(new_log)
-
         db.commit()
         db.refresh(item)
-
         return {
-            "status":"success", 
-            "message":"Количество обновлено и записано в историю", 
-            "item":item
+            "status": "success", 
+            "message": "Количество обновлено и записано в историю", 
+            "item": item
         }
     
     except Exception as e:
         db.rollback()
         print(f"Error: {repr(e)}")
-        raise HTTPException(status_code=500, detail="Ошибка БД при обновлении")
+        raise HTTPException(
+            status_code=500,
+            detail="Ошибка БД при обновлении"
+        )
     
 
 # DELETE: удаление данных
@@ -267,12 +344,16 @@ def delete_item(
     db: Session = Depends(get_db),
     admin_id: int = Depends(require_admin)
 ):
-    item = db.query(models.Item).filter(models.Item.id == item_id).first()
+    item = db.query(
+        models.Item
+        ).filter(models.Item.id == item_id
+        ).first()
 
     if not item:
-        raise HTTPException(status_code=404, detail="Товар не найден")
-    
+        raise HTTPException(
+            status_code=404,
+            detail="Товар не найден"
+        )
     db.delete(item)
     db.commit()
-
-    return {"message": "Товар успешно удален админом ID {admin_id}"}
+    return {"message": f"Товар успешно удален админом ID {admin_id}"}
