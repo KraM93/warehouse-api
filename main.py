@@ -26,10 +26,8 @@ ALGORITHM = os.getenv("ALGORITHM", "HS256")
 
 # Кнопка Authorize
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl="login")
-
 # Создание таблиц в БД
 models.Base.metadata.create_all(bind=engine)
-
 # Экземпляр приложения
 app = FastAPI(title="Inventory API", description="Система управления складом")
 
@@ -205,10 +203,10 @@ def register_user(
         f"пароль='{user.password}'"
     )
     # Проверка на дубль логина
-    existing_user = db.query(
-        models.User
-        ).filter(models.User.username == user.username
-        ).first()
+    existing_user = (db.query(models.User)
+                    .filter(models.User.username == user.username)
+                    .first()
+    )
     print(f"Поиск: {existing_user}")
 
     if existing_user:
@@ -230,12 +228,11 @@ def register_user(
     db.add(db_user)
     db.commit()
     db.refresh(db_user)
-    
     print(f"Успех! ID пользователя: {db_user.id}")
     return {
         "status": "success",
         "message": "Пользователь успешно зарегистрирован",
-        "user_id":db_user.id
+        "user_id": db_user.id
     }
 
 
@@ -246,10 +243,10 @@ def login_user(
     db: Session = Depends(get_db)
 ):
     # Ищем по логину
-    db_user = db.query(
-        models.User
-        ).filter(models.User.username == form_data.username
-        ).first()
+    db_user = (db.query(models.User)
+               .filter(models.User.username == form_data.username)
+               .first()
+    )
 
     # Защита: проверка на совпадение логина и пароля
     if not db_user or not pwd_context.verify(
@@ -260,10 +257,8 @@ def login_user(
             status_code=401,
             detail="Неверный логин или пароль"
         )
-    
     # Время жизни токена
     expire_time = datetime.now(timezone.utc) + timedelta(minutes=30)
-
     # Формирование токена
     token_data = {
         "sub": str(db_user.id),
@@ -293,10 +288,10 @@ def update_quantity(
     db: Session = Depends(get_db),
     current_user_id: int = Depends(get_current_user)
 ):
-    item = db.query(
-        models.Item
-        ).filter(models.Item.id == item_id
-        ).first()
+    item = (db.query(models.Item)
+            .filter(models.Item.id == item_id)
+            .first()
+    )
     # Поиск товара
     if item is None:
         raise HTTPException(
@@ -323,11 +318,10 @@ def update_quantity(
         db.commit()
         db.refresh(item)
         return {
-            "status": "success", 
-            "message": "Количество обновлено и записано в историю", 
+            "status": "success",
+            "message": "Количество обновлено и записано в историю",
             "item": item
-        }
-    
+        }    
     except Exception as e:
         db.rollback()
         print(f"Error: {repr(e)}")
@@ -340,14 +334,14 @@ def update_quantity(
 # DELETE: удаление данных
 @app.delete("/items/{item_id}")
 def delete_item(
-    item_id: int, 
+    item_id: int,
     db: Session = Depends(get_db),
     admin_id: int = Depends(require_admin)
 ):
-    item = db.query(
-        models.Item
-        ).filter(models.Item.id == item_id
-        ).first()
+    item = (db.query(models.Item)
+            .filter(models.Item.id == item_id)
+            .first()
+    )
 
     if not item:
         raise HTTPException(
