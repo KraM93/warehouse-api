@@ -135,7 +135,8 @@ def open_main_window():
             update_window,
             text="Сохранить",
             bg="lightgreen",
-            command=save_quantity).pack(pady=10)
+            command=save_quantity
+        ).pack(pady=10)
 
     def add_new_item():
         add_window = tk.Toplevel(main_window)
@@ -146,20 +147,22 @@ def open_main_window():
         tk.Label(
             add_window,
             text="Наименование: ",
-            font=("Arial", 10)).pack(pady=(10, 0))
+            font=("Arial", 10)
+        ).pack(pady=(10, 0))
         entry_name = tk.Entry(add_window, width=30)
         entry_name.pack(pady=5)
         tk.Label(
             add_window,
             text="Цена: ",
-            font=("Arial", 10)).pack(pady=(10, 0))
+            font=("Arial", 10)
+        ).pack(pady=(10, 0))
         entry_price = tk.Entry(add_window, width=15)
         entry_price.pack(pady=5)
     
+
         def save_new_item():
             name = entry_name.get().strip()
             price_text = entry_price.get().strip().replace(',', '.')
-
             if not name:
                 messagebox.showwarning(
                     "Внимание",
@@ -186,19 +189,36 @@ def open_main_window():
                     add_window.destroy()
                     load_items()
                 else:
-                    messagebox.showerror("Ошибка", f"Отказ сервера: {response.text}")
+                    messagebox.showerror(
+                        "Ошибка",
+                        f"Отказ сервера: {response.text}"
+                    )
 
             except ValueError:
-                messagebox.showerror("Ошибка ввода", "Введите корректную цену")
+                messagebox.showerror(
+                    "Ошибка ввода",
+                    "Введите корректную цену"
+                )
             except requests.exceptions.ConnectionError:
-                messagebox.showerror("Ошибка сети", "Нет связи с сервером")
+                messagebox.showerror(
+                "Ошибка сети",
+                "Нет связи с сервером"
+                )
 
-        tk.Button(add_window, text="Добавить", bg="lightblue", command=save_new_item).pack(pady=15)
+        tk.Button(
+            add_window,
+            text="Добавить",
+            bg="lightblue",
+            command=save_new_item
+        ).pack(pady=15)
 
     def delete_item():
         selected = tree.selection()
         if not selected:
-            messagebox.showwarning("Внимание", "Сначала выделите товар для удаления!")
+            messagebox.showwarning(
+                "Внимание",
+                "Сначала выделите товар для удаления!"
+            )
             return
         
         item_id = tree.item(selected[0])['values'][0]
@@ -215,58 +235,129 @@ def open_main_window():
         headers = {"Authorization": f"Bearer {current_token}"}
 
         try:
-            response = requests.delete(f"{API_URL}/items/{item_id}", headers=headers)
+            response = requests.delete(
+                f"{API_URL}/items/{item_id}",
+                headers=headers
+            )
 
             if response.status_code in (200, 204):
                 load_items()
             else:
-                messagebox.showerror("Ошикба", f"Отказ сервера: {response.text}")
+                messagebox.showerror(
+                    "Ошикба",
+                    f"Отказ сервера: {response.text}"
+                )
 
         except requests.exceptions.ConnectionError:
-            messagebox.showerror("Ошибка сети", "Нет связи с сервером")
+            messagebox.showerror(
+                "Ошибка сети",
+                "Нет связи с сервером"
+            )
 
     def sync_with_supplier():
         # TODO: API
-        messagebox.showinfo("Синхронизация", "Подключение к серверу поставщика")
+        messagebox.showinfo(
+            "Синхронизация",
+            "Подключение к серверу поставщика"
+        )
 
     top_frame = tk.Frame(main_window)
     top_frame.pack(fill=tk.X, padx=10, pady=5)
 
-    tk.Label(top_frame, text="Поиск: ").pack(side=tk.LEFT)
+    tk.Label(
+        top_frame,
+        text="Поиск: "
+    ).pack(side=tk.LEFT)
 
     entry_search = tk.Entry(top_frame, width=30)
     entry_search.pack(side=tk.LEFT, padx=5)
 
-    btn_search = tk.Button(top_frame, text="Найти", width=10, command=perform_search)
+    btn_search = tk.Button(
+        top_frame,
+        text="Найти",
+        width=10, 
+        command=perform_search
+    )
     btn_search.pack(side=tk.LEFT)
 
-    btn_update = tk.Button(top_frame, text="Изменить остаток", bg="lightgreen", command=update_quantity)
+    btn_update = tk.Button(
+        top_frame,
+        text="Изменить остаток",
+        bg="lightgreen",
+        command=update_quantity
+    )
     btn_update.pack(side=tk.RIGHT, padx=5)
 
-    btn_add = tk.Button(top_frame, text="Новый товар", bg="lightblue", command=add_new_item)
+    btn_add = tk.Button(
+        top_frame,
+        text="Новый товар",
+        bg="lightblue",
+        command=add_new_item
+    )
     btn_add.pack(side=tk.RIGHT)
 
-    btn_sync = tk.Button(top_frame, text="Синхронизация", bg="lightyellow", command=sync_with_supplier)
+    btn_sync = tk.Button(
+        top_frame,
+        text="Синхронизация",
+        bg="lightyellow",
+        command=sync_with_supplier
+    )
     btn_sync.pack(side=tk.RIGHT, padx=5)
 
-    btn_delete = tk.Button(top_frame, text="Удалить", width=10, bg="lightcoral", command=delete_item)
+    btn_delete = tk.Button(
+        top_frame,
+        text="Удалить",
+        width=10,
+        bg="lightcoral",
+        command=delete_item
+    )
     btn_delete.pack(side=tk.RIGHT, padx=5)
 
-    columns = ("id", "name", "price", "quantity")
+    columns = (
+        "id",
+        "name",
+        "price",
+        "quantity"
+    )
 
-    tree = ttk.Treeview(main_window, columns=columns, show="headings")
+    tree = ttk.Treeview(
+        main_window,
+        columns=columns,
+        show="headings"
+    )
 
     tree.heading("id", text="ID")
     tree.heading("name", text="Наименование товара")
     tree.heading("price", text="Цена")
     tree.heading("quantity", text="Остаток на складе")
 
-    tree.column("id", width=50, anchor=tk.CENTER)
-    tree.column("name", width=300, anchor=tk.W)
-    tree.column("price", width=100, anchor=tk.CENTER)
-    tree.column("quantity", width=150, anchor=tk.CENTER)
+    tree.column(
+        "id",
+        width=50,
+        anchor=tk.CENTER
+    )
+    tree.column(
+        "name",
+        width=300,
+        anchor=tk.W
+    )
+    tree.column(
+        "price",
+        width=100,
+        anchor=tk.CENTER
+    )
+    tree.column(
+        "quantity",
+        width=150,
+        anchor=tk.CENTER
+    )
 
-    tree.pack(fill=tk.BOTH, expand=True, padx=10, pady=10)
+    tree.pack(
+        fill=tk.BOTH,
+        expand=True,
+        padx=10,
+        pady=10
+    )
 
     load_items()
 
@@ -276,7 +367,11 @@ root.title("Склад 1.0 - Вход")
 root.geometry("300x250")
 root.resizable(False, False)
 
-tk.Label(root, text="Авторизация", font=("Arial", 14, "bold")).pack(pady=15)
+tk.Label(
+    root,
+    text="Авторизация",
+    font=("Arial", 14, "bold")
+).pack(pady=15)
 
 tk.Label(root, text="Логин: ").pack()
 entry_username = tk.Entry(root, width=25)
@@ -286,6 +381,11 @@ tk.Label(root, text="Пароль: ").pack()
 entry_password = tk.Entry(root, width=25, show="*")
 entry_password.pack(pady=5)
 
-tk.Button(root, text="Войти", command=attempt_login, width=15, bg="lightblue").pack(pady=20)
+tk.Button(
+    root,
+    text="Войти",
+    command=attempt_login,
+    width=15, bg="lightblue"
+).pack(pady=20)
 
 root.mainloop()
