@@ -128,8 +128,7 @@ def get_item(item_id: int, db: Session = Depends(get_db)):
             status_code=404,
             detail="Товар не найден"
         )
-    
-    return {"status":"ok", "item":item}
+    return {"status": "ok", "item": item}
 
 
 # GET: Получить список товаров (с поиском и страницами)
@@ -144,9 +143,7 @@ def get_items(
 
     if search:
         query = query.filter(models.Item.name.ilike(f"%{search}%"))
-    
     items = query.offset(skip).limit(limit).all()
-
     return items
 
 
