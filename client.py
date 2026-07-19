@@ -158,6 +158,7 @@ def open_main_window():
         ).pack(pady=(10, 0))
         entry_price = tk.Entry(add_window, width=15)
         entry_price.pack(pady=5)
+
         def save_new_item():
             name = entry_name.get().strip()
             price_text = entry_price.get().strip().replace(',', '.')
@@ -167,7 +168,6 @@ def open_main_window():
                     "Название товара не может быть пустым!"
                 )
                 return
-            
             try:
                 price = float(price_text)
                 headers = {"Authorization": f"Bearer {current_token}"}
@@ -197,8 +197,8 @@ def open_main_window():
                 )
             except requests.exceptions.ConnectionError:
                 messagebox.showerror(
-                "Ошибка сети",
-                "Нет связи с сервером"
+                    "Ошибка сети",
+                    "Нет связи с сервером"
                 )
 
         tk.Button(
@@ -216,7 +216,6 @@ def open_main_window():
                 "Сначала выделите товар для удаления!"
             )
             return
-        
         item_id = tree.item(selected[0])['values'][0]
         item_name = tree.item(selected[0])['values'][1]
 
